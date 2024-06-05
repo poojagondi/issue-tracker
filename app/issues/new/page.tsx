@@ -3,10 +3,10 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { Button, Callout, Text, TextField } from "@radix-ui/themes";
 import { useForm, Controller } from "react-hook-form";
-import axios, { Axios } from "axios";
-import { Issue } from "@prisma/client";
+import axios from "axios";
+
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/validationSchema";
 import { z } from "zod";
@@ -38,7 +38,7 @@ const NewIssuePage = () => {
       setError("Oh no an unexpected error occured 😦");
     }
   });
-
+  const nav = useMemo(() => navigator, []);
   return (
     <div className="max-w-xl">
       {error && (
@@ -46,6 +46,7 @@ const NewIssuePage = () => {
           {error}
         </Callout.Root>
       )}
+
       <form className=" space-y-3" onSubmit={onSubmit}>
         <TextField.Root
           placeholder="Title"
@@ -55,9 +56,9 @@ const NewIssuePage = () => {
         <Controller
           name="description"
           control={control}
-          render={({ field }) => (
-            <SimpleMDE placeholder="Description" {...field} />
-          )}
+          render={({ field }) =>
+            nav ? <SimpleMDE placeholder="Description" {...field} /> : <></>
+          }
         />
 
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
